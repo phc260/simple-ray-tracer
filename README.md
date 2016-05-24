@@ -8,4 +8,4 @@ Ray Tracing: The Rest Of Your Life (Ray Tracing Minibooks Book 3)
 by Peter Shirley  
 
 #Gallery
-![My image] (phc260.github.com/repository/gallery/test_lambertian_metal_dielectric.jpg)
+![image](phc260.github.com/repository/gallery/test_lambertian_metal_dielectric.jpg)

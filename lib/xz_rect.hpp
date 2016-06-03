@@ -51,11 +51,11 @@ bool xz_rect::bounding_box(double t0, double t1, aabb& box) const {
 }
 
 double xz_rect::pdf_value(const vec3& o, const vec3& v) const {
-	hit_record rec;
+	hit_record hrec;
 	
-	if (this->hit(ray(o, v), IOTA, DBL_MAX, rec)) {
-		double distance_squared = rec.t * rec.t;
-		double cosine = fabs(dot(v, rec.normal));
+	if (this->hit(ray(o, v), IOTA, DBL_MAX, hrec)) {
+		double distance_squared = hrec.t * hrec.t;
+		double cosine = fabs(dot(v, hrec.normal));
 		double cos_area = cosine * area;
 		return distance_squared / cos_area;
 	}

@@ -3,11 +3,8 @@
 
 #include <vector>
 #include "aabb.hpp"
-#include "flip_normal.hpp"
 #include "hitable_list.hpp"
-#include "xy_rect.hpp"
-#include "xz_rect.hpp"
-#include "yz_rect.hpp"
+#include "quadrilateral.hpp"
 
 class box : public hitable {
 public:
@@ -32,12 +29,20 @@ private:
 box::box(const vec3& p0, const vec3& p1, material *m) {
 	pmin = p0; pmax = p1;
 	
-	list.push(new xy_rect(p0.x(), p1.x(), p0.y(), p1.y(), p1.z(), m));
-	list.push(new flip_normal(new xy_rect(p0.x(), p1.x(), p0.y(), p1.y(), p0.z(), m)));
-	list.push(new xz_rect(p0.x(), p1.x(), p0.z(), p1.z(), p1.y(), m));
-	list.push(new flip_normal(new xz_rect(p0.x(), p1.x(), p0.z(), p1.z(), p0.y(), m)));
-	list.push(new yz_rect(p0.y(), p1.y(), p0.z(), p1.z(), p1.x(), m));
-	list.push(new flip_normal(new yz_rect(p0.y(), p1.y(), p0.z(), p1.z(), p0.x(), m)));
-	
+	vec3 v0(p0.x(), p1.y(), p0.z());
+	vec3 v1(p0.x(), p1.y(), p1.z());
+	vec3 v2(p1.x(), p1.y(), p1.z());
+	vec3 v3(p1.x(), p1.y(), p0.z());
+	vec3 v4(p0.x(), p0.y(), p0.z());
+	vec3 v5(p0.x(), p0.y(), p1.z());
+	vec3 v6(p1.x(), p0.y(), p1.z());
+	vec3 v7(p1.x(), p0.y(), p0.z());
+
+	list.push(new quadrilateral(v0, v1, v2, v3, m));
+	list.push(new quadrilateral(v7, v6, v5, v4, m));
+	list.push(new quadrilateral(v1, v0, v4, v5, m));
+	list.push(new quadrilateral(v3, v2, v6, v7, m));
+	list.push(new quadrilateral(v4, v0, v3, v7, m));
+	list.push(new quadrilateral(v2, v1, v5, v6, m));
 }
 #endif

@@ -30,3 +30,5 @@ for j in xrange(y):
 		k += 3
 im.save(name + ".jpg", quality=100)
 
+print chr(7)
+

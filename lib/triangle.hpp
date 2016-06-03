@@ -13,9 +13,12 @@ public :
 	virtual double pdf_value(const vec3& o, const vec3& v) const;
 	virtual vec3 random(const vec3& o) const;
 
+	vec3 get_normal() const { return normal; }
+
 private:
 	vec3 v[3];
 	vec3 e[2];
+	vec3 normal;
 	double area;
 	material *mat_ptr;
 };
@@ -24,43 +27,44 @@ triangle::triangle(vec3 v0, vec3 v1, vec3 v2, material *m) {
 	v[0] = v0; v[1] = v1; v[2] = v2;
 	e[0] = v[1] - v[0];
 	e[1] = v[2] - v[0];
+	normal = normalize(cross(e[0], e[1]));
 	area = 0.5 * cross(e[0], e[1]).length();
 	mat_ptr = m;
 }
 
 // Möller–Trumbore intersection algorithm
 bool triangle::hit(const ray& r, double t_min, double t_max, hit_record& hrec) const {
-	vec3 p, q, t;
-	double det, inv_det, a, b, d;
-	
-	p = cross(r.direction(), e[1]);
+	vec3 pvec, qvec, tvec;
+	double det, inv_det, t, u, v;
 
-	det = dot(e[0], p);
+	pvec = cross(r.direction(), e[1]);
 
-	if (-IOTA < det && det < IOTA) return false;
+	det = dot(e[0], pvec);
+
+	if (fabs(det) < IOTA) return false;
 
 	inv_det = 1.0 / det;
 
-	t = r.origin() - v[0];
+	tvec = r.origin() - this->v[0];
 
-	a = dot(t, p) * inv_det;
+	u = dot(tvec, pvec) * inv_det;
 
-	if (a<0.0 || a>1.0) return false;
+	if (u < 0.0 || u> 1.0) return false;
 
-	q = cross(t, e[0]);
+	qvec = cross(tvec, this->e[0]);
 
-	b = dot(r.direction(), q) * inv_det;
+	v = dot(r.direction(), qvec) * inv_det;
 
-	if (b<0.0 || a+b>1.0) return false;
+	if (v < 0.0 || u + v > 1.0) return false;
 
-	d = dot(e[1], q);
+	t = dot(this->e[1], qvec) * inv_det;
 
-	if (d < IOTA) return false;
-
-	hrec.point = r.origin() + d*r.direction();
-	hrec.normal = normalize(cross(e[0], e[1]));
+	if (t < t_min || t > t_max) return false;
+	hrec.t = t;
+	hrec.point = r.origin() + r.direction() * t;
+	hrec.normal = normal;
 	hrec.mat_ptr = mat_ptr;
-	//std::cout << hrec.point << "\n";
+
 	return true;
 }
 
@@ -95,7 +99,11 @@ double triangle::pdf_value(const vec3& o, const vec3& v) const {
 }
 
 vec3 triangle::random(const vec3& o) const {
-	vec3 p = v[0] + e[0] * drand48() + e[1] * drand48();
+	float b0 = drand48();
+	float b1 = (1.0f - b0) * drand48();
+	float b2 = 1 - b0 - b1;
+
+	vec3 p = v[0] * b0 + v[1] * b1 + v[2] * b2;
 	return p - o;
 }
 #endif

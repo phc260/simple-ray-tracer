@@ -9,11 +9,11 @@
 class material;
 
 struct hit_record {
-	double t;
+	double t = 0.0;
 	vec3 point;
 	vec3 normal;
 	double u = 0.0, v = 0.0;
-	material *mat_ptr;
+	material *mat_ptr = nullptr;
 };
 
 class hitable {

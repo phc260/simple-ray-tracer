@@ -6,37 +6,28 @@
 #include "aabb.hpp"
 #include "hitable.hpp"
 
+vec3 euler_rotate(const vec3 &v, const vec3 &radians) {
+	vec3 q;
 
-vec3 rotate_around(const vec3 &point, const vec3& radians) {
-	vec3 p;
-	vec3 cos_theta;
-	vec3 sin_theta;
+	vec3 c, s;
+	int p = 0, h = 1, r = 2;
 	for (int i = 0; i < 3; ++i) {
-		sin_theta[i] = sin(radians[i]);
-		cos_theta[i] = cos(radians[i]);
+		c[i] = cos(radians[i]);
+		s[i] = sin(radians[i]);
 	}
-	p[0] = cos_theta[1] * cos_theta[2] * point.x()
-		+ (cos_theta[2] * sin_theta[0] * sin_theta[1] - cos_theta[0] * sin_theta[2]) * point.y()
-		+ (cos_theta[0] * cos_theta[2] * sin_theta[1] + sin_theta[0] * sin_theta[2]) * point.z();
-	p[1] = cos_theta[1] * sin_theta[2] * point.x()
-		+ (cos_theta[0] * cos_theta[2] + sin_theta[0] * sin_theta[1] * sin_theta[2]) * point.y()
-		+ (-cos_theta[2] * sin_theta[0] + cos_theta[0] * sin_theta[1] * sin_theta[2]) * point.z();
-	p[2] = -sin_theta[1] * point.x() + cos_theta[1] * sin_theta[0] * point.y() + cos_theta[0] * cos_theta[1] * point.z();
-	return p;
+	q[0] = (c[r] * c[h] - s[r] * s[p] * s[h]) * v[0] + (-s[r] * c[p]) * v[1] + (c[r] * s[h] + s[r] * s[p] * c[h]) *v[2];
+	q[1] = (s[r] * c[h] + c[r] * s[p] * s[h]) *v[0] + (c[r] * c[p]) *v[1] + (s[r] * s[h] - c[r] * s[p] * c[h]) *v[2];
+	q[2] = (-c[p] * s[h]) *v[0] + s[p] * v[1] + (c[p] * c[h]) *v[2];
+	return q;
 }
 
-vec3 rotate_y(const vec3 &point, const vec3& radians) {
-	vec3 p;
-	vec3 cos_theta;
-	vec3 sin_theta;
-	for (int i = 0; i < 3; ++i) {
-		sin_theta[i] = sin(radians[i]);
-		cos_theta[i] = cos(radians[i]);
-	}
-	p[0] = cos_theta[1] * point.x() + sin_theta[1] * point.z();
-	p[1] = point.y();
-	p[2] = -sin_theta[1] * point.x() + cos_theta[1] * point.z();
-	return p;
+vec3 euler_rotate(const vec3 &v, const vec3 m[3]) {
+	vec3 q;
+
+	q[0] = dot(v, m[0]);
+	q[1] = dot(v, m[1]);
+	q[2] = dot(v, m[2]);
+	return q;
 }
 
 class rotate: public hitable {
@@ -45,10 +36,13 @@ public:
 	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const;
 	virtual bool boundng_box(double t0, double t1, aabb& box) const;
 
+private:
 	hitable *ptr;
 	vec3 radians;
 	bool hasbox;
 	aabb bbox;
+	vec3 mat[3];
+	vec3 neg_mat[3];
 };
 
 rotate::rotate(hitable *h, const vec3 &angle) {
@@ -68,12 +62,7 @@ rotate::rotate(hitable *h, const vec3 &angle) {
 				double z = k*bbox.max().z() + (1 - k)*bbox.min().z();
 				
 				vec3 p(x, y, z);
-				point = rotate_y(p, radians);
-				/*
-				point[0] = cos(radians[1]) * p.x() + sin(radians[1]) * p.z();
-				point[1] = y;
-				point[2] = -sin(radians[1]) * p.x() + cos(radians[1]) * p.z();
-				*/
+				point = euler_rotate(p, radians);
 				for (int c = 0; c < 3; ++c) {
 					max[c] = ffmax(point[c], max[c]);
 					min[c] = ffmin(point[c], min[c]);
@@ -87,21 +76,13 @@ bool rotate::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
 	vec3 origin = r.origin();
 	vec3 direction = r.direction();
 
-	origin = rotate_y(origin, -radians);
-	direction = rotate_y(direction, -radians);
-	/*
-	origin[0] = cos(radians[1]) * r.origin().x() - sin(radians[1]) * r.origin().z();
-	origin[1] = r.origin().y();
-	origin[2] = sin(radians[1]) * r.origin().x() + cos(radians[1]) * r.origin().z();
+	origin = euler_rotate(origin, -radians);
+	direction = euler_rotate(direction, -radians);
 
-	direction[0] = cos(radians[1]) * r.direction().x() - sin(radians[1]) * r.direction().z();
-	direction[1] = r.direction().y();
-	direction[2] = sin(radians[1]) * r.direction().x() + cos(radians[1]) * r.direction().z();
-	*/
 	ray rotated_r(origin, direction, r.time());
 	if (ptr->hit(rotated_r, t_min, t_max, rec)) {
-		rec.point = rotate_y(rec.point, radians);
-		rec.normal = rotate_y(rec.normal, radians);
+		rec.point = euler_rotate(rec.point, radians);
+		rec.normal = euler_rotate(rec.normal, radians);
 		return true;;
 	}
 

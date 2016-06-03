@@ -19,15 +19,17 @@ public:
 	std::vector<hitable*> list;
 };
 
-bool hitable_list::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
-	hit_record new_rec;
+bool hitable_list::hit(const ray& r, double t_min, double t_max, hit_record& hrec) const {
+	hit_record new_hrec;
 	bool hit_anything = false;
 	double closet_so_far = t_max;
 	for (int i = 0; i < size(); ++i) {
-		if (list[i]->hit(r, t_min, closet_so_far, new_rec)) {
-			hit_anything = true;
-			closet_so_far = new_rec.t;
-			rec = new_rec;
+		if (list[i]->hit(r, t_min, closet_so_far, new_hrec)) {
+			//if (new_hrec.t < closet_so_far) {
+				hit_anything = true;
+				closet_so_far = new_hrec.t;
+				hrec = new_hrec;
+			//}
 		}
 	}
 	return hit_anything;

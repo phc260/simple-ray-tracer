@@ -1,9 +1,5 @@
 #include "stdafx.h"
 
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-
 #include "../lib/camera.hpp"
 #include "../lib/vec3.hpp"
 #include "../lib/ray.hpp"
@@ -29,6 +25,13 @@
 #include "../lib/image_texture.hpp"
 #include "../lib/noise_texture.hpp"
 
+
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <string>
+#include <windows.h>
+
 #define MAX_DEPTH 5
 //#define MOVING_SPHERE
 //#define RANDOM_ALG
@@ -43,7 +46,6 @@ vec3 colour(const ray& r, hitable& world, int depth) {
 			if (srec.is_specular) {
 				return srec.attenuation * colour(srec.specular_ray, world, depth + 1);
 			}
-			//ray scattered(hrec.point, random_cosine_direction(), r.time());
 			ray scattered(hrec.point, srec.pdf_ptr->generate(), r.time());
 			delete srec.pdf_ptr;
 			return srec.attenuation * colour(scattered, world, depth + 1);
@@ -125,6 +127,21 @@ std::vector<hitable*> test_perlin_texture_mapping() {
 	return list;
 }
 
+void draw_progress_bar(int len, double percent) {
+	std::cout << "\r";
+	std::string progress;
+	for (int i = 0; i < len; ++i) {
+		if (i < static_cast<int>(len * percent)) {
+			progress += "=";
+		}
+		else {
+			progress += " ";
+		}
+	}
+	std::cout << "[" << progress << "] " << (static_cast<int>(100.0 * percent)) << "%";
+	std::flush(std::cout);
+}
+
 int main() {
 	int nx = 800;
 	int ny = 600;
@@ -132,10 +149,10 @@ int main() {
 	// horizontal sampling and vertical sampling
 	int sampling_size = 32;
 	double s = double(sampling_size);
-	std::ofstream out("test_perlin_texture_mapping.ppm");
+	std::ofstream out("test_triangle.ppm");
 	out << "P3\n" << nx << " " << ny << "\n255\n";
 
-	hitable_list world(test_perlin_texture_mapping());
+	hitable_list world(test_triangle());
 
 	vec3 lookfrom = vec3(13.0, 2.0, 3.0);
 	vec3 lookat = vec3(0.0, 1.0, 0.0);
@@ -167,9 +184,9 @@ int main() {
 			int ib = int(255.99*sqrt(col[2]));
 			out << ir << " " << ig << " " << ib << "\n";
 		}
+		draw_progress_bar(40, double(ny - j) / double(ny));
 	}
 	out.close();
-	std::cout << "Press any key to continue.\n";
-	//std::cin.get();
+
 	return 0;
 }

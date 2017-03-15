@@ -1,7 +1,6 @@
 #Features
 Ellipsoid, Triangle, Lambertian material, Metal material with fuzziness, Dielectric material, Classical Perlin noise  
 
-#Gallery
 ![image](https://github.com/phc260/simple-ray-tracer/blob/master/gallery/test_lambertian_metal_dielectric.jpg)
 ![image](https://github.com/phc260/simple-ray-tracer/blob/master/gallery/rand_world.jpg)
 ![image](https://github.com/phc260/simple-ray-tracer/blob/master/gallery/test_perlin_texture_mapping.jpg)

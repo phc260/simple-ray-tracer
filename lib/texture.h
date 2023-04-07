@@ -14,7 +14,8 @@
 #include "rtweekend.h"
 
 #include "perlin.h"
-#include "rtw_stb_image.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "../stb/stb_image.h"
 
 #include <iostream>
 
@@ -105,7 +106,7 @@ class image_texture : public texture {
         }
 
         ~image_texture() {
-            STBI_FREE(data);
+            // STBI_FREE(data);
         }
 
         virtual color value(double u, double v, const vec3& p) const override {

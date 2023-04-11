@@ -1,0 +1,12 @@
+#!/bin/bash
+function compile {
+    echo "Compiling $1 ..."
+    g++ -std=c++17 -pthread -I argparse/include -I indicators/include $1 -o $2
+}
+
+
+for name in *.cc
+do
+    BASENAME=${name%.*}
+    compile $name $BASENAME
+done

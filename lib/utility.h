@@ -24,7 +24,7 @@
 argparse::ArgumentParser generate_argparser(std::string name, int argc, char** argv) {
     argparse::ArgumentParser program(name);
 
-    program.add_argument("-H", "--image-height")
+    program.add_argument("-w", "--image-width")
         .default_value(540)
         .scan<'i', int>();
 

@@ -1,0 +1,42 @@
+#!/bin/bash
+help_msg() {
+  echo 'Usage ./compile [FILE]'
+  echo '      --all     compile all cc files in current directory'
+  echo '  -h, --help    print help message'
+}
+
+compile() {
+  echo -e "\033[96m[DEBUG]\033[0m Compiling $1 ..."
+  g++ -std=c++17 -O3 -pthread -I argparse/include -I indicators/include $1 -o $2 &
+}
+
+wait_for_compilation() {
+  for job in `jobs -p`
+  do
+    wait $job || let "FAIL+=1"
+  done
+  echo -e '\033[92m[INFO]\033[0m Mission Complete!'
+}
+
+
+case ${1} in
+  --help | -h | '')
+    help_msg
+    ;;
+
+  --all)
+    for name in *.cc
+    do
+      BASENAME=${name%.*}
+      compile $name $BASENAME
+    done
+    wait_for_compilation
+    ;;
+
+  *)
+    echo ${1}
+    BASENAME=${1%.*}
+    compile ${1} $BASENAME
+    wait_for_compilation
+    ;;
+esac

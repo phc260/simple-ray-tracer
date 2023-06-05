@@ -136,5 +136,4 @@ int main(int argc, char** argv) {
     // Write image
     stbi_write_jpg(output_jpg.c_str(), image_width, image_height, 3, image, 100);
     delete[] image;
-    std::cerr << "\nDone.\n";
 }

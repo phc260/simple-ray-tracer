@@ -75,6 +75,8 @@ uint8_t* render(
         option::Remainder{" "},
         option::End{"]"},
         option::ShowPercentage(true),
+        option::ShowElapsedTime{true},
+        option::ShowRemainingTime{true},
         option::ForegroundColor{Color::cyan},
         option::FontStyles{std::vector<FontStyle>{FontStyle::bold}}
     }; 

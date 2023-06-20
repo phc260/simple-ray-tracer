@@ -13,7 +13,7 @@ A Multi-Threaded implementation of [Peter Shirley's Ray Tracing in One Weekend B
 ```bash
 git clone --recursive https://github.com/phc260/simple-ray-tracer.git
 cd simple-ray-tracer
-./compile_all
+./compile --all
 ```
 
 ## *Run*

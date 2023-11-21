@@ -11,11 +11,17 @@ compile() {
 }
 
 wait_for_compilation() {
+  let "FAIL=0"
   for job in `jobs -p`
   do
     wait $job || let "FAIL+=1"
   done
-  echo -e '\033[92m[INFO]\033[0m Mission Complete!'
+  if [ $FAIL -eq 0 ]
+  then
+	echo -e "\033[92m[INFO]\033[0m Mission Complete!"
+  else
+    echo -e "\033[31m[ERROR]\033[0m $FAIL Failed!"
+  fi
 }
 
 

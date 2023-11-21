@@ -14,7 +14,7 @@
 #include <argparse/argparse.hpp>
 #include <indicators/progress_bar.hpp>
 #include <indicators/cursor_control.hpp>
-#include "../thread-pool/BS_thread_pool.hpp"
+#include "../thread-pool/include/BS_thread_pool.hpp"
 
 #include <string>
 #include <tuple>

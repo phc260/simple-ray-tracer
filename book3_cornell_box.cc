@@ -109,8 +109,9 @@ hittable_list cornell_box() {
 int main(int argc, char** argv) {
     signal(SIGINT, signal_callback_handler);
 
-    argparse::ArgumentParser argparser =
-        generate_argparser("cornell_box", argc, argv);
+    RaytracerArgumentParser argparser("cornell_box");
+    argparser.try_parse_args(argc, argv);
+
     const double aspect_ratio = 1.0;
     int image_width = argparser.get<int>("--image-width");
     int image_height = image_width;

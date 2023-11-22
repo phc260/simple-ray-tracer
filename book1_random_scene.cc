@@ -103,8 +103,9 @@ hittable_list random_scene() {
 int main(int argc, char** argv) {
     signal(SIGINT, signal_callback_handler);
 
-    argparse::ArgumentParser argparser =
-        generate_argparser("random_scene", argc, argv);
+    RaytracerArgumentParser argparser("random_scene");
+    argparser.try_parse_args(argc, argv);
+
     const double aspect_ratio = 16.0 / 9.0;
     int image_width = argparser.get<int>("--image-width");
     int image_height= static_cast<int>(image_width / aspect_ratio);

@@ -285,8 +285,9 @@ hittable_list final_scene() {
 int main(int argc, char** argv) {
     signal(SIGINT, signal_callback_handler);
 
-    argparse::ArgumentParser argparser =
-        generate_argparser("final_scene", argc, argv);
+    RaytracerArgumentParser argparser("final_scene");
+    argparser.try_parse_args(argc, argv);
+
     double aspect_ratio = 16.0 / 9.0;
     int image_width = argparser.get<int>("--image-width");
     int samples_per_pixel = argparser.get<int>("--samples-per-pixel");

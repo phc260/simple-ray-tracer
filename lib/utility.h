@@ -21,34 +21,35 @@
 #include <vector>
 
 
-argparse::ArgumentParser generate_argparser(std::string name, int argc, char** argv) {
-    argparse::ArgumentParser program(name);
-
-    program.add_argument("-w", "--image-width")
-        .default_value(540)
-        .scan<'i', int>();
-
-    program.add_argument("-s", "--samples-per-pixel")
-        .default_value(100)
-        .scan<'i', int>();
-
-    program.add_argument("-d", "--max-depth")
-        .default_value(50)
-        .scan<'i', int>();
-
-    program.add_argument("-o" , "--output-jpg")
-        .default_value(std::string(name + ".jpg"));
-
-    try {
-        program.parse_args(argc, argv);
-    }
-    catch (const std::runtime_error& err) {
-        std::cerr << err.what() << std::endl;
-        std::cerr << program;
-        std::exit(1);
-    }
-    return program;
-}
+class RaytracerArgumentParser: public argparse::ArgumentParser {
+    private:
+        std::string m_program_name;
+    public:
+        RaytracerArgumentParser(std::string program_name): argparse::ArgumentParser(program_name) {
+            m_program_name = program_name;
+            this->add_argument("-w", "--image-width")
+                .default_value(540)
+                .scan<'i', int>();
+            this->add_argument("-s", "--samples-per-pixel")
+                .default_value(100)
+                .scan<'i', int>();
+            this->add_argument("-d", "--max-depth")
+                .default_value(50)
+                .scan<'i', int>();
+            this->add_argument("-o" , "--output-jpg")
+                .default_value(this->m_program_name + ".jpg");
+        }
+        void try_parse_args(int argc, char** argv) {
+            try {
+                this->parse_args(argc, argv);
+            }
+            catch (const std::runtime_error& err) {
+                std::cerr << err.what() << std::endl;
+                std::cerr << this;
+                std::exit(1);
+            }
+        }
+};
 
 
 void signal_callback_handler(int signum) {

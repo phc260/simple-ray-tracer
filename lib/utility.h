@@ -90,7 +90,7 @@ uint8_t* render(
         std::vector<std::future<color>> futures;
 
         for (int i = 0; i < image_width; ++i) {
-            std::future<color> my_future = pool.submit(
+            std::future<color> my_future = pool.submit_task(
                 [cam, world, i, j, image_width, image_height,
                  samples_per_pixel, max_depth, func, args] {
                     color pixel_color(0,0,0);

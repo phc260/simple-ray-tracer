@@ -84,23 +84,25 @@ hittable_list cornell_box() {
     auto red   = make_shared<lambertian>(color(.65, .05, .05));
     auto white = make_shared<lambertian>(color(.73, .73, .73));
     auto green = make_shared<lambertian>(color(.12, .45, .15));
-    auto light = make_shared<diffuse_light>(color(15, 15, 15));
+    auto light = make_shared<diffuse_light>(color(30, 30, 30));
+    auto navy  = make_shared<lambertian>(color(0, 87, 183)/255);
+    auto gold  = make_shared<lambertian>(color(255, 221, 0)/255);
 
-    objects.add(make_shared<yz_rect>(0, 555, 0, 555, 555, green));
-    objects.add(make_shared<yz_rect>(0, 555, 0, 555, 0, red));
+    objects.add(make_shared<yz_rect>(0, 555, 0, 555, 555, navy));
+    objects.add(make_shared<yz_rect>(0, 555, 0, 555, 0, gold));
     objects.add(make_shared<flip_face>(make_shared<xz_rect>(213, 343, 227, 332, 554, light)));
     objects.add(make_shared<xz_rect>(0, 555, 0, 555, 555, white));
     objects.add(make_shared<xz_rect>(0, 555, 0, 555, 0, white));
     objects.add(make_shared<xy_rect>(0, 555, 0, 555, 555, white));
 
     shared_ptr<material> aluminum = make_shared<metal>(color(0.8, 0.85, 0.88), 0.0);
-    shared_ptr<hittable> box1 = make_shared<box>(point3(0,0,0), point3(165,330,165), aluminum);
+    shared_ptr<hittable> box1 = make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), aluminum);
     box1 = make_shared<rotate_y>(box1, 15);
-    box1 = make_shared<translate>(box1, vec3(265,0,295));
+    box1 = make_shared<translate>(box1, vec3(265, 0, 295));
     objects.add(box1);
 
     auto glass = make_shared<dielectric>(1.5);
-    objects.add(make_shared<sphere>(point3(190,90,190), 90 , glass));
+    objects.add(make_shared<sphere>(point3(190, 90, 190), 90 , glass));
 
     return objects;
 }
@@ -132,7 +134,7 @@ int main(int argc, char** argv) {
 
     auto world = cornell_box();
 
-    color background(0,0,0);
+    color background(0, 0, 0);
 
     // Camera
     point3 lookfrom(278, 278, -800);
